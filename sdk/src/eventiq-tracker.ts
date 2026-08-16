@@ -1,6 +1,7 @@
 export interface EventIQConfig {
   systemId: string;
   endpoint: string;
+  headers?: Record<string, string>;
   batchSize?: number;
   flushIntervalMs?: number;
 }
@@ -30,6 +31,7 @@ export class EventIQTracker {
     this.config = {
       batchSize: 25,
       flushIntervalMs: 5000,
+      headers: {},
       ...config,
     };
 
@@ -89,8 +91,8 @@ export class EventIQTracker {
   private patchHistory(method: 'pushState' | 'replaceState') {
     const original = history[method];
     const self = this;
-    history[method] = function (...args: any[]) {
-      const result = original.apply(this, args);
+    history[method] = function (data: any, unused: string, url?: string | URL | null) {
+      const result = original.apply(this, [data, unused, url]);
       self.track('navigation', method, { url: window.location.href });
       return result;
     };
@@ -170,7 +172,7 @@ export class EventIQTracker {
       } else {
         const response = await fetch(this.config.endpoint, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...this.config.headers },
           body: JSON.stringify(eventsToFlush),
           keepalive: isUnload
         });
@@ -209,13 +211,13 @@ export class EventIQTracker {
       getAllRequest.onsuccess = async () => {
         const records = getAllRequest.result as TrackedEvent[][];
         if (records && records.length > 0) {
-           const allEvents = records.flat();
+           const allEvents = ([] as TrackedEvent[]).concat(...records);
            
            // clear on success
            try {
              const response = await fetch(this.config.endpoint, {
                method: 'POST',
-               headers: { 'Content-Type': 'application/json' },
+               headers: { 'Content-Type': 'application/json', ...this.config.headers },
                body: JSON.stringify(allEvents)
              });
              

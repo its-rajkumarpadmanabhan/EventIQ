@@ -3,14 +3,12 @@ import { useQuery } from '@tanstack/react-query';
 import { ChevronDown, ChevronRight, Clock, MousePointer, Navigation, Power } from 'lucide-react';
 
 const fetchUserTimeline = async (username: string) => {
-  // Mock data for immediate frontend preview
-  return [
-    { log_id: '101', timestamp: new Date().toISOString(), event_category: 'lifecycle', event_action: 'exit', payload: {} },
-    { log_id: '102', timestamp: new Date(Date.now() - 2000).toISOString(), event_category: 'interaction', event_action: 'click', payload: { tag: 'BUTTON', textSnippet: 'Submit Order', x: 450, y: 320 } },
-    { log_id: '103', timestamp: new Date(Date.now() - 5000).toISOString(), event_category: 'interaction', event_action: 'mousemove', payload: { x: 400, y: 300 } },
-    { log_id: '104', timestamp: new Date(Date.now() - 15000).toISOString(), event_category: 'navigation', event_action: 'pushState', payload: { url: '/checkout' } },
-    { log_id: '105', timestamp: new Date(Date.now() - 45000).toISOString(), event_category: 'lifecycle', event_action: 'visible', payload: { url: '/products' } },
-  ];
+  const response = await fetch(`http://localhost:8000/api/v1/analytics/users/${username}/timeline/`);
+  if (!response.ok) {
+    if (response.status === 404) return [];
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
 };
 
 export const UserJourneyTimeline = ({ username = 'jdoe' }) => {
