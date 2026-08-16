@@ -1,36 +1,35 @@
-# EventIQ
-High-intelligence event capturing and analytical parsing.
+# EventIQ Platform
 
-EventIQ/
-├── .github/workflows/          # CI/CD pipelines
-├── docker-compose.yml          # Local orchestration (Django, React, Redis, Postgres, ClickHouse)
-│
-├── eventiq-backend/            # Python / Django Core & API Layer
-│   ├── manage.py
-│   ├── core/                   # Django settings, WSGI/ASGI, base configs
-│   ├── apps/
-│   │   ├── authentication/     # MNC SSO (SAML/OAuth2), RBAC, API Keys
-│   │   ├── ingestion/          # High-speed log intake endpoints & serializers
-│   │   ├── processing/         # Celery tasks, batch enrichment, PII masking
-│   │   ├── analytics/          # Query engine for ClickHouse/Elasticsearch
-│   │   └── alerts/             # Real-time anomaly detection & webhooks
-│   └── requirements.txt
-│
-├── eventiq-dashboard/          # React + TypeScript Web App
-│   ├── src/
-│   │   ├── api/                # Axios clients & React Query hooks
-│   │   ├── components/         # Reusable UI (Timelines, LogTables, FilterBars)
-│   │   ├── features/
-│   │   │   ├── live-stream/    # WebSocket/SSE real-time event feed
-│   │   │   ├── user-journey/   # Visual breadcrumb reconstruction
-│   │   │   ├── heatmaps/       # Activity distribution & interaction density
-│   │   │   └── audit-export/   # Multi-variable log search & export
-│   │   └── pages/              # Routed views
-│   └── package.json
-│
-├── eventiq-collectors/         # Client-side SDKs & background trackers
-│   ├── web-sdk/                # Browser script & NPM package (DOM/route tracking)
-│   ├── browser-extension/      # Chrome/Edge extension for broad web capture
-│   └── desktop-agent/          # Python/C# background daemon for OS-level actions
-│
-└── docs/                       # API specs, OpenAPI/Swagger, architecture diagrams
+Enterprise-grade telemetry and user activity logging platform designed for monitoring multiple interconnected web and desktop systems.
+
+## Version 1.0.0 (Initial Implementation)
+
+This initial version provides the foundational architecture for EventIQ:
+
+### 1. Client-Side Telemetry SDK
+- Located in `/sdk/src/eventiq-tracker.ts`
+- Zero-dependency TypeScript tracker.
+- Captures clicks, mouse movements, visibility changes, and SPA navigations.
+- Features automatic client-side PII redaction for sensitive inputs.
+- Implements an `IndexedDB` fallback mechanism for offline buffering.
+
+### 2. Django Backend Pipeline
+- High-throughput API built with Django Ninja.
+- `EventLog` and `SystemRegistry` models using PostgreSQL `JSONField`.
+- Asynchronous event processing and batch database inserts via Celery and Redis.
+
+### 3. React Dashboard
+- Built with Vite, React, TypeScript, and Tailwind CSS.
+- Features a real-time `LiveEventStream` view.
+- Includes a detailed `UserJourneyTimeline` to inspect individual user sessions.
+
+### 4. Docker Orchestration
+- Complete local development stack via `docker-compose.yml`.
+- Includes PostgreSQL, Redis, Django API, Celery worker, and NGINX-hosted React frontend.
+
+## How to Run locally
+
+1. Ensure Docker Desktop is installed and running.
+2. Run `docker-compose up --build -d` in the root directory.
+3. The dashboard is accessible at `http://localhost`.
+4. The API is accessible at `http://localhost:8000/api/v1/`.
