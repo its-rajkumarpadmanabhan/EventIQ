@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Activity } from 'lucide-react';
 import { MetricsCards } from './components/MetricsCards';
@@ -9,6 +9,8 @@ import { UserJourneyTimeline } from './components/UserJourneyTimeline';
 const queryClient = new QueryClient();
 
 function App() {
+  const [selectedUsername, setSelectedUsername] = useState<string>('');
+
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen bg-dark-bg text-gray-200 font-sans">
@@ -31,14 +33,14 @@ function App() {
         {/* Main Content */}
         <main className="p-6 max-w-[1600px] mx-auto">
           <MetricsCards />
-          <FilterBar />
+          <FilterBar selectedUsername={selectedUsername} onUsernameChange={setSelectedUsername} />
           
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 h-[700px]">
             <div className="xl:col-span-2 h-full">
               <LiveEventStream />
             </div>
             <div className="h-full">
-              <UserJourneyTimeline />
+              <UserJourneyTimeline username={selectedUsername} />
             </div>
           </div>
         </main>

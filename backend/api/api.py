@@ -1,6 +1,6 @@
 import json
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.shortcuts import get_object_or_404
 from ninja import NinjaAPI, Schema
 from ninja.security import APIKeyHeader
@@ -104,7 +104,28 @@ def get_analytics_events(
             payload=event.payload
         ))
         
-    return {"total": total, "page": page, "items": items}
+class MetricsResponse(Schema):
+    total_events: int
+    active_users: int
+    top_systems: int
+    anomalies: int
+
+@api.get("/analytics/metrics/", response=MetricsResponse)
+def get_analytics_metrics(request):
+    now = datetime.now()
+    twenty_four_hours_ago = now - timedelta(hours=24)
+    
+    total_events = EventLog.objects.filter(timestamp__gte=twenty_four_hours_ago).count()
+    active_users = EventLog.objects.exclude(username__isnull=True).exclude(username='').values('username').distinct().count()
+    top_systems = EventLog.objects.values('system').distinct().count()
+    anomalies = EventLog.objects.filter(event_category='error').count()
+    
+    return {
+        "total_events": total_events,
+        "active_users": active_users,
+        "top_systems": top_systems,
+        "anomalies": anomalies
+    }
 
 @api.get("/analytics/users/{username}/timeline/", response=List[EventPayloadSchema])
 def get_user_timeline(request, username: str):

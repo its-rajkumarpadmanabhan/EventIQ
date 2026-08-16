@@ -26,6 +26,7 @@ export class EventIQTracker {
   private lastMouseMoveTime = 0;
   private mouseMoveThrottleMs = 500;
   private isOffline = !navigator.onLine;
+  private activeUsername?: string;
 
   constructor(config: EventIQConfig) {
     this.config = {
@@ -39,6 +40,11 @@ export class EventIQTracker {
     this.attachListeners();
     this.startFlushTimer();
     this.flushOfflineEvents();
+  }
+
+  public identify(username: string) {
+    this.activeUsername = username;
+    this.track('lifecycle', 'identify', { username });
   }
 
   private initDatabase() {
@@ -136,6 +142,7 @@ export class EventIQTracker {
       log_id: crypto.randomUUID(),
       timestamp: new Date().toISOString(),
       system_id: this.config.systemId,
+      username: this.activeUsername,
       event_category: category,
       event_action: action,
       payload

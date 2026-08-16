@@ -1,7 +1,7 @@
 import React from 'react';
 import { Search, Filter, Calendar } from 'lucide-react';
 
-export const FilterBar = () => {
+export const FilterBar = ({ selectedUsername, onUsernameChange }: { selectedUsername: string, onUsernameChange: (u: string) => void }) => {
   return (
     <div className="bg-dark-card border border-dark-border rounded-lg p-4 mb-6 flex flex-wrap gap-4 items-end">
       <div className="flex-1 min-w-[200px]">
@@ -14,6 +14,8 @@ export const FilterBar = () => {
             type="text" 
             className="block w-full pl-10 pr-3 py-2 bg-slate-800 border border-slate-700 rounded-md text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand" 
             placeholder="e.g. jdoe, sys-web-prod" 
+            value={selectedUsername}
+            onChange={(e) => onUsernameChange(e.target.value)}
           />
         </div>
       </div>
