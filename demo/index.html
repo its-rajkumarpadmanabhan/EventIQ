@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventIQ Demo Application</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 2rem; background: #f3f4f6; color: #1f2937; }
+        .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); max-width: 600px; margin: 0 auto; }
+        h1 { color: #3b82f6; }
+        button { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; margin-right: 10px; }
+        button:hover { background: #2563eb; }
+        input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box; }
+        .ignore-section { margin-top: 2rem; padding: 1rem; background: #fee2e2; border: 1px solid #f87171; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>EventIQ Demo App</h1>
+        <p>This page has the EventIQ SDK injected. Any clicks, mouse movements, or navigation will be sent to your local Django backend.</p>
+
+        <div style="margin-top: 2rem;">
+            <h3>Checkout Form</h3>
+            <input type="text" placeholder="Full Name (Tracked)" />
+            <input type="text" placeholder="Social Security Number (Will be auto-redacted)" />
+            <input type="text" placeholder="Credit Card Number (Will be auto-redacted)" />
+            
+            <button id="checkout-btn">Complete Checkout</button>
+            <button id="nav-btn" style="background: #10b981;">Simulate SPA Navigation</button>
+        </div>
+
+        <div class="ignore-section" data-eventiq-ignore="true">
+            <h3>Private Section</h3>
+            <p>This entire div has <code>data-eventiq-ignore="true"</code>. Interactions inside here will NOT be tracked by the SDK.</p>
+            <button style="background: #ef4444;">Secret Button</button>
+        </div>
+    </div>
+
+    <!-- Load the compiled SDK -->
+    <script type="module">
+        import { EventIQTracker } from '../sdk/dist/eventiq-tracker.js';
+
+        // Initialize the Tracker
+        const tracker = new EventIQTracker({
+            systemId: 'demo-web-app',
+            endpoint: 'http://localhost:8000/api/v1/events/ingest/batch/',
+            headers: {
+                'X-API-Key': 'demo_api_key_12345'
+            },
+            batchSize: 5, // Small batch size for demo purposes
+            flushIntervalMs: 2000 // Fast flush for demo purposes
+        });
+
+        // Simulate SPA Navigation
+        document.getElementById('nav-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            const newUrl = '/demo/success-page';
+            history.pushState({ page: 'success' }, 'Success Page', newUrl);
+            console.log('Navigated to ' + newUrl);
+        });
+    </script>
+</body>
+</html>

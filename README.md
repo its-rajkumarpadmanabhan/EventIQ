@@ -27,6 +27,14 @@ This initial version provides the foundational architecture for EventIQ:
 - Complete local development stack via `docker-compose.yml`.
 - Includes PostgreSQL, Redis, Django API, Celery worker, and NGINX-hosted React frontend.
 
+## Version 1.1.0 (Real-World Integration)
+
+This update connects all isolated components to enable live data flow:
+- **SDK Compilation**: The TypeScript SDK is compiled and ready for direct browser usage.
+- **Demo App**: A local `demo/index.html` simulates a client application, sending real interactions to the backend.
+- **Backend Migrations & Seeding**: The Docker orchestration automatically runs database migrations and seeds a `SystemRegistry` API key for the demo app.
+- **Live Dashboard**: The React dashboard now fetches real data directly from the Django backend API instead of using mock data.
+
 ## How to Run locally
 
 1. Ensure Docker Desktop is installed and running.

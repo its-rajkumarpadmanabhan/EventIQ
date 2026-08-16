@@ -2,17 +2,11 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 const fetchEvents = async () => {
-  // In a real app, this would fetch from our Django API endpoint
-  // return fetch('http://localhost:8000/api/v1/analytics/events/').then(res => res.json());
-  
-  // Mocking for immediate visual feedback
-  return {
-    items: [
-      { log_id: '1', timestamp: new Date().toISOString(), system_id: 'sys-web-prod', username: 'jdoe', event_category: 'interaction', event_action: 'click', payload: { tag: 'BUTTON' } },
-      { log_id: '2', timestamp: new Date(Date.now() - 5000).toISOString(), system_id: 'sys-web-prod', username: 'asmith', event_category: 'navigation', event_action: 'pushState', payload: { url: '/dashboard' } },
-      { log_id: '3', timestamp: new Date(Date.now() - 15000).toISOString(), system_id: 'sys-desktop-v1', username: 'jdoe', event_category: 'lifecycle', event_action: 'exit', payload: {} },
-    ]
-  };
+  const response = await fetch('http://localhost:8000/api/v1/analytics/events/');
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
 };
 
 export const LiveEventStream = () => {
