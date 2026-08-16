@@ -22,7 +22,7 @@
 
         <div style="margin-top: 2rem;">
             <h3>Checkout Form</h3>
-            <input type="text" placeholder="Full Name (Tracked)" />
+            <input type="text" id="full-name" placeholder="Full Name (Tracked)" />
             <input type="text" placeholder="Social Security Number (Will be auto-redacted)" />
             <input type="text" placeholder="Credit Card Number (Will be auto-redacted)" />
             
@@ -58,6 +58,15 @@
             const newUrl = '/demo/success-page';
             history.pushState({ page: 'success' }, 'Success Page', newUrl);
             console.log('Navigated to ' + newUrl);
+        });
+
+        // Auto identify user on input
+        document.getElementById('full-name').addEventListener('blur', (e) => {
+            const username = e.target.value.trim().toLowerCase().replace(/\s+/g, '_');
+            if (username) {
+                tracker.identify(username);
+                console.log('Identified user as ' + username);
+            }
         });
     </script>
 </body>

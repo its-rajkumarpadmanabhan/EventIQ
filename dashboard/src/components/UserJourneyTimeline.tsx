@@ -11,10 +11,11 @@ const fetchUserTimeline = async (username: string) => {
   return response.json();
 };
 
-export const UserJourneyTimeline = ({ username = 'jdoe' }) => {
+export const UserJourneyTimeline = ({ username }: { username?: string }) => {
   const { data: events, isLoading } = useQuery({ 
     queryKey: ['timeline', username], 
-    queryFn: () => fetchUserTimeline(username) 
+    queryFn: () => username ? fetchUserTimeline(username) : Promise.resolve([]),
+    enabled: !!username
   });
 
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -37,8 +38,12 @@ export const UserJourneyTimeline = ({ username = 'jdoe' }) => {
       </div>
       
       <div className="p-6 overflow-y-auto max-h-[600px]">
-        {isLoading ? (
+        {!username ? (
+          <p className="text-center text-gray-500 py-8">Please enter a username in the search bar to view their journey timeline.</p>
+        ) : isLoading ? (
           <p className="text-center text-gray-500">Loading timeline...</p>
+        ) : events?.length === 0 ? (
+          <p className="text-center text-gray-500 py-8">No events found for {username}.</p>
         ) : (
           <div className="relative border-l border-dark-border ml-3 space-y-6">
             {events?.map((event: any, idx: number) => (

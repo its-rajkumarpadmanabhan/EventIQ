@@ -22,6 +22,10 @@ export class EventIQTracker {
         this.startFlushTimer();
         this.flushOfflineEvents();
     }
+    identify(username) {
+        this.activeUsername = username;
+        this.track('lifecycle', 'identify', { username });
+    }
     initDatabase() {
         const request = indexedDB.open(this.config.systemId + '_' + this.dbName, 1);
         request.onupgradeneeded = (event) => {
@@ -106,6 +110,7 @@ export class EventIQTracker {
             log_id: crypto.randomUUID(),
             timestamp: new Date().toISOString(),
             system_id: this.config.systemId,
+            username: this.activeUsername,
             event_category: category,
             event_action: action,
             payload
